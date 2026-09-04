@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
 import styles from './map.module.css';
 import { Button } from '@/components/ui/button/Button';
 import { 
@@ -13,11 +14,11 @@ import { AreaChart, Area, ResponsiveContainer } from 'recharts';
 
 type RiskLevel = 'safe' | 'warning' | 'critical';
 
-interface District {
+export interface District {
   id: string;
   name: string;
-  x: number; // relative percentage
-  y: number; // relative percentage
+  lat: number;
+  lng: number;
   risk: RiskLevel;
   disease: string;
   pest: string;
@@ -26,14 +27,19 @@ interface District {
 }
 
 const DISTRICTS: District[] = [
-  { id: 'nashik', name: 'Nashik', x: 30, y: 30, risk: 'critical', disease: 'Grape Downy Mildew', pest: 'Thrips', weather: 'High Humidity (88%)', trendData: [{risk: 20}, {risk: 40}, {risk: 65}, {risk: 90}] },
-  { id: 'pune', name: 'Pune', x: 35, y: 55, risk: 'warning', disease: 'Onion Blight', pest: 'Armyworm', weather: 'Unseasonal Rain (25mm)', trendData: [{risk: 10}, {risk: 15}, {risk: 30}, {risk: 60}] },
-  { id: 'nagpur', name: 'Nagpur', x: 80, y: 25, risk: 'safe', disease: 'Citrus Canker (Low)', pest: 'Whitefly (Low)', weather: 'Clear / Optimal', trendData: [{risk: 30}, {risk: 25}, {risk: 20}, {risk: 15}] },
-  { id: 'aurangabad', name: 'Aurangabad', x: 55, y: 40, risk: 'warning', disease: 'Cotton Wilt', pest: 'Bollworm', weather: 'Dry Spell', trendData: [{risk: 40}, {risk: 45}, {risk: 50}, {risk: 55}] },
-  { id: 'solapur', name: 'Solapur', x: 50, y: 70, risk: 'safe', disease: 'None Detected', pest: 'Minor Aphids', weather: 'Normal', trendData: [{risk: 15}, {risk: 10}, {risk: 12}, {risk: 10}] },
-  { id: 'kolhapur', name: 'Kolhapur', x: 30, y: 80, risk: 'critical', disease: 'Sugarcane Smut', pest: 'Early Shoot Borer', weather: 'Heavy Rain (45mm)', trendData: [{risk: 30}, {risk: 50}, {risk: 70}, {risk: 85}] },
-  { id: 'amravati', name: 'Amravati', x: 65, y: 20, risk: 'safe', disease: 'None Detected', pest: 'None', weather: 'Clear', trendData: [{risk: 5}, {risk: 5}, {risk: 8}, {risk: 5}] },
+  { id: 'nashik', name: 'Nashik', lat: 19.9975, lng: 73.7898, risk: 'critical', disease: 'Grape Downy Mildew', pest: 'Thrips', weather: 'High Humidity (88%)', trendData: [{risk: 20}, {risk: 40}, {risk: 65}, {risk: 90}] },
+  { id: 'pune', name: 'Pune', lat: 18.5204, lng: 73.8567, risk: 'warning', disease: 'Onion Blight', pest: 'Armyworm', weather: 'Unseasonal Rain (25mm)', trendData: [{risk: 10}, {risk: 15}, {risk: 30}, {risk: 60}] },
+  { id: 'nagpur', name: 'Nagpur', lat: 21.1458, lng: 79.0882, risk: 'safe', disease: 'Citrus Canker (Low)', pest: 'Whitefly (Low)', weather: 'Clear / Optimal', trendData: [{risk: 30}, {risk: 25}, {risk: 20}, {risk: 15}] },
+  { id: 'aurangabad', name: 'Aurangabad', lat: 19.8762, lng: 75.3433, risk: 'warning', disease: 'Cotton Wilt', pest: 'Bollworm', weather: 'Dry Spell', trendData: [{risk: 40}, {risk: 45}, {risk: 50}, {risk: 55}] },
+  { id: 'solapur', name: 'Solapur', lat: 17.6599, lng: 75.9064, risk: 'safe', disease: 'None Detected', pest: 'Minor Aphids', weather: 'Normal', trendData: [{risk: 15}, {risk: 10}, {risk: 12}, {risk: 10}] },
+  { id: 'kolhapur', name: 'Kolhapur', lat: 16.7050, lng: 74.2433, risk: 'critical', disease: 'Sugarcane Smut', pest: 'Early Shoot Borer', weather: 'Heavy Rain (45mm)', trendData: [{risk: 30}, {risk: 50}, {risk: 70}, {risk: 85}] },
+  { id: 'amravati', name: 'Amravati', lat: 20.9320, lng: 77.7523, risk: 'safe', disease: 'None Detected', pest: 'None', weather: 'Clear', trendData: [{risk: 5}, {risk: 5}, {risk: 8}, {risk: 5}] },
 ];
+
+const DetailedMap = dynamic(() => import('@/components/ui/map/DetailedMap'), {
+  ssr: false,
+  loading: () => <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>Loading Maps...</div>
+});
 
 export default function MapPage() {
   const [selectedDistrict, setSelectedDistrict] = useState<District | null>(null);
@@ -54,27 +60,14 @@ export default function MapPage() {
       </header>
 
       <div className={styles.mapLayout}>
-        {/* Abstract Map Area */}
-        <div className={styles.mapArea}>
+        {/* Real Detailed Geographic Map Area */}
+        <div className={styles.mapArea} style={{ padding: 0 }}>
           <div className={styles.mapNetwork}>
-            {/* Draw abstract connecting lines */}
-            <div className={styles.mapLine} style={{ top: '30%', left: '30%', width: '31%', transform: 'rotate(21deg)' }}></div>
-            <div className={styles.mapLine} style={{ top: '30%', left: '30%', width: '25%', transform: 'rotate(78deg)' }}></div>
-            <div className={styles.mapLine} style={{ top: '55%', left: '35%', width: '25%', transform: 'rotate(-36deg)' }}></div>
-            <div className={styles.mapLine} style={{ top: '55%', left: '35%', width: '21%', transform: 'rotate(45deg)' }}></div>
-            <div className={styles.mapLine} style={{ top: '40%', left: '55%', width: '25%', transform: 'rotate(-30deg)' }}></div>
-
-            {DISTRICTS.map((district) => (
-              <div 
-                key={district.id}
-                className={`${styles.districtNode} ${styles[district.risk]} ${selectedDistrict?.id === district.id ? styles.selected : ''}`}
-                style={{ left: `${district.x}%`, top: `${district.y}%` }}
-                onClick={() => setSelectedDistrict(district)}
-              >
-                <div className={styles.nodeCircle}></div>
-                <div className={styles.nodeLabel}>{district.name}</div>
-              </div>
-            ))}
+            <DetailedMap 
+              districts={DISTRICTS} 
+              selectedDistrict={selectedDistrict} 
+              onSelectDistrict={setSelectedDistrict} 
+            />
           </div>
         </div>
 
