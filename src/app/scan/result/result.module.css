@@ -1,0 +1,240 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--color-off-white);
+  padding: var(--spacing-8) var(--spacing-12);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-8);
+}
+
+.title {
+  font-family: var(--font-outfit);
+  font-size: 2rem;
+  color: var(--color-deep-forest);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: var(--spacing-8);
+}
+
+/* Image Section */
+.imageSection {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 350px;
+  background: #1A2F24;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  margin-bottom: var(--spacing-6);
+}
+
+.boundingBox {
+  position: absolute;
+  border: 2px solid var(--color-amber);
+  background: rgba(217, 154, 69, 0.2);
+  top: 20%;
+  left: 30%;
+  width: 120px;
+  height: 120px;
+}
+
+.boundingBoxLabel {
+  position: absolute;
+  top: -24px;
+  left: -2px;
+  background: var(--color-amber);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px 4px 0 0;
+}
+
+.scanDetails {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-4);
+}
+
+.detailItem {
+  background: var(--color-off-white);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-sm);
+}
+
+.detailLabel {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.detailValue {
+  font-weight: 600;
+  color: var(--color-charcoal);
+  font-size: 0.875rem;
+}
+
+/* Diagnosis Section */
+.diagnosisSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-6);
+}
+
+.severityBanner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(179, 78, 78, 0.05);
+  border: 1px solid rgba(179, 78, 78, 0.2);
+  padding: var(--spacing-6);
+  border-radius: var(--radius-lg);
+}
+
+.diagnosisTitle {
+  font-family: var(--font-outfit);
+  font-size: 2.5rem;
+  color: var(--color-red);
+  margin-bottom: 4px;
+}
+
+.confidenceBadge {
+  background: var(--color-red);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.severityIndicator {
+  text-align: right;
+}
+
+.severityLabel {
+  font-size: 0.875rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.severityValue {
+  font-family: var(--font-outfit);
+  font-size: 1.5rem;
+  color: var(--color-red);
+  font-weight: 700;
+}
+
+/* Info Cards */
+.infoCard {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-weight: 600;
+  color: var(--color-deep-forest);
+}
+
+.aiReasoningList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.aiReasoningList li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  margin-bottom: var(--spacing-3);
+  font-size: 0.875rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.aiReasoningList li:last-child {
+  margin-bottom: 0;
+}
+
+.reasonIcon {
+  color: var(--color-muted-green);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.envFactors {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-4);
+}
+
+.envItem {
+  text-align: center;
+  background: var(--color-off-white);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-sm);
+}
+
+.envItem svg {
+  color: var(--color-amber);
+  margin-bottom: var(--spacing-2);
+}
+
+.envValue {
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.envLabel {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.recommendation {
+  background: var(--color-deep-forest);
+  color: white;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-6);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-4);
+}
+
+.recContent h4 {
+  font-size: 1.125rem;
+  margin-bottom: var(--spacing-2);
+  color: var(--color-muted-green-light);
+}
+
+.recContent p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}

@@ -1,0 +1,245 @@
+.container {
+  min-height: 100vh;
+  background-color: var(--color-off-white);
+  padding: var(--spacing-8) var(--spacing-12);
+}
+
+.header {
+  margin-bottom: var(--spacing-8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-family: var(--font-outfit);
+  font-size: 2rem;
+  color: var(--color-deep-forest);
+}
+
+.subtitle {
+  color: #666;
+  font-size: 0.875rem;
+}
+
+.topMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+}
+
+.metricCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.metricHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2);
+  color: #555;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.metricValue {
+  font-family: var(--font-outfit);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-deep-forest);
+  margin-bottom: var(--spacing-2);
+}
+
+.metricValue.danger { color: var(--color-red); }
+.metricValue.warning { color: var(--color-amber); }
+.metricValue.safe { color: var(--color-muted-green); }
+
+.metricSubtext {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* Forecast Area */
+.forecastGrid {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-8);
+}
+
+.chartCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  height: 450px;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.chartTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-deep-forest);
+}
+
+.chartLegend {
+  display: flex;
+  gap: var(--spacing-4);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.chartContainer {
+  flex: 1;
+  width: 100%;
+}
+
+/* Factor Analysis */
+.factorCard {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
+}
+
+.factorTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-deep-forest);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.factorList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.factorItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+}
+
+.factorIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--color-off-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.factorIcon.red { color: var(--color-red); background: rgba(179, 78, 78, 0.1); }
+.factorIcon.green { color: var(--color-muted-green); background: rgba(78, 110, 88, 0.1); }
+
+.factorContent h4 {
+  font-size: 0.875rem;
+  margin-bottom: 2px;
+}
+
+.factorContent p {
+  font-size: 0.75rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Prediction Details Table */
+.predictionTable {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.tableHeader {
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  background: var(--color-off-white);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--color-deep-forest);
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr;
+  padding: var(--spacing-4) var(--spacing-6);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.tableHead {
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  background: transparent;
+}
+
+.riskBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.riskHigh { background: rgba(179, 78, 78, 0.1); color: var(--color-red); }
+.riskMed { background: rgba(217, 154, 69, 0.1); color: var(--color-amber); }
+.riskLow { background: rgba(78, 110, 88, 0.1); color: var(--color-muted-green); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .topMetrics { grid-template-columns: 1fr 1fr; }
+  .forecastGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: var(--spacing-4); }
+  .header { flex-direction: column; align-items: flex-start; gap: var(--spacing-4); }
+  .topMetrics { grid-template-columns: 1fr 1fr; gap: var(--spacing-3); }
+  .tableRow { grid-template-columns: 1fr 1fr; }
+  .chartCard { height: 300px; }
+}
