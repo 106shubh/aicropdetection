@@ -15,6 +15,7 @@
   --spacing-2: 0.5rem;
   --spacing-3: 0.75rem;
   --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
   --spacing-6: 1.5rem;
   --spacing-8: 2rem;
   --spacing-12: 3rem;
@@ -118,4 +119,11 @@ input, textarea, select {
 ::selection {
   background: rgba(78, 110, 88, 0.2);
   color: var(--color-deep-forest);
+}
+
+/* Hide default cursor on desktop since we have a custom cursor */
+@media (pointer: fine) {
+  body, a, button {
+    cursor: none !important;
+  }
 }

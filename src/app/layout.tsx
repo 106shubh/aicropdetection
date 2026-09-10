@@ -3,6 +3,9 @@ import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 import MobileNav from '@/components/layout/MobileNav/MobileNav';
 import PageTransition from '@/components/layout/PageTransition';
+import dynamic from 'next/dynamic';
+
+const CustomCursor = dynamic(() => import('@/components/ui/CustomCursor'), { ssr: false });
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
@@ -22,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body>
+        <CustomCursor />
         <PageTransition>
           {children}
         </PageTransition>

@@ -1,7 +1,8 @@
 .dashboardLayout {
   display: flex;
   min-height: 100vh;
-  background-color: var(--color-off-white);
+  background-color: #f7f6f2;
+  color: #1a1a1a;
 }
 
 /* Sidebar */
@@ -25,7 +26,7 @@
   font-family: var(--font-outfit);
   font-weight: 700;
   font-size: 1.25rem;
-  color: var(--color-deep-forest);
+  color: #1a1a1a;
   display: flex;
   align-items: center;
   gap: var(--spacing-2);
@@ -113,8 +114,10 @@
 }
 
 .pageTitle {
-  font-size: 2rem;
-  color: var(--color-deep-forest);
+  font-size: 2.5rem;
+  font-family: var(--font-outfit);
+  font-weight: 400;
+  color: #1a1a1a;
   margin-bottom: var(--spacing-1);
 }
 
@@ -165,9 +168,9 @@
 
 .kpiInfo p {
   font-family: var(--font-outfit);
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-deep-forest);
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: #1a1a1a;
   margin-bottom: var(--spacing-1);
 }
 
@@ -205,8 +208,10 @@
 }
 
 .chartTitle {
-  font-size: 1.125rem;
-  color: var(--color-deep-forest);
+  font-family: var(--font-outfit);
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #1a1a1a;
   margin-bottom: 2px;
 }
 
@@ -234,7 +239,10 @@
 }
 
 .actionText h3 {
-  font-size: 1.5rem;
+  font-family: var(--font-outfit);
+  font-weight: 400;
+  font-size: 2rem;
+  color: #1a1a1a;
   margin-bottom: var(--spacing-2);
 }
 

@@ -1,0 +1,15 @@
+.cursorWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  /* The SVG path starts at 4,4 so we offset slightly so the tip of the arrow is exactly at the mouse */
+  margin-top: -2px;
+  margin-left: -2px;
+}
+
+.cursorArrow {
+  display: block;
+  transition: filter 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+}

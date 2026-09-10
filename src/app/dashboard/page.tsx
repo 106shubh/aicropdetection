@@ -12,6 +12,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const diseaseData = [
   { name: 'Mon', risk: 20, rain: 5 },
@@ -33,15 +34,18 @@ const radarData = [
 
 export default function Dashboard() {
   const [mode, setMode] = useState<'farmer' | 'gov'>('farmer');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <div className={styles.dashboardLayout}>
       {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <div className={styles.logo}>
-            <span className={styles.logoText}>KrishiRakshak</span>
-          </div>
+          <Link href="/" style={{textDecoration:'none'}}>
+            <div className={styles.logo}>
+              <span className={styles.logoText}>KrishiRakshak</span>
+            </div>
+          </Link>
         </div>
         
         <div className={styles.modeToggle}>
@@ -100,8 +104,87 @@ export default function Dashboard() {
               {mode === 'farmer' ? 'Real-time health and risk assessment for your registered plots.' : 'Macro-level analytics for Maharashtra State agricultural defense.'}
             </p>
           </div>
-          <Button variant="primary" icon={<Settings size={16} />}>Settings</Button>
+          <Button variant="primary" icon={<Settings size={16} />} onClick={() => setIsSettingsOpen(true)}>Settings</Button>
         </header>
+
+        {/* SETTINGS MODAL */}
+        <AnimatePresence>
+          {isSettingsOpen && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{
+                position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', 
+                backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 9999, display: 'flex', 
+                alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)'
+              }}
+              onClick={() => setIsSettingsOpen(false)}
+            >
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+                style={{
+                  background: 'white', borderRadius: '24px', padding: '2rem', width: '90%', 
+                  maxWidth: '500px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', position: 'relative'
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+                  <h2 style={{ fontSize: '1.5rem', color: '#1a1a1a', fontFamily: 'var(--font-outfit)' }}>System Settings</h2>
+                  <button onClick={() => setIsSettingsOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}>✕</button>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  {/* Language Settings */}
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#444' }}>Interface Language</label>
+                    <select style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd', fontSize: '1rem', outline: 'none' }}>
+                      <option value="en">English</option>
+                      <option value="hi">हिंदी (Hindi)</option>
+                      <option value="mr">मराठी (Marathi)</option>
+                    </select>
+                  </div>
+
+                  {/* Notification Toggles */}
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 500, color: '#444' }}>Alert Preferences</label>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                        <input type="checkbox" defaultChecked style={{ width: '18px', height: '18px', accentColor: 'var(--color-muted-green)' }} />
+                        <span>SMS Weather Warnings</span>
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                        <input type="checkbox" defaultChecked style={{ width: '18px', height: '18px', accentColor: 'var(--color-muted-green)' }} />
+                        <span>WhatsApp AI Protocols</span>
+                      </label>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                        <input type="checkbox" style={{ width: '18px', height: '18px', accentColor: 'var(--color-muted-green)' }} />
+                        <span>Government Subsidy Alerts</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Region */}
+                  <div>
+                    <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#444' }}>Primary Farm Region</label>
+                    <input type="text" defaultValue="Nashik, Maharashtra" style={{ width: '100%', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ddd', fontSize: '1rem', outline: 'none' }} />
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end', gap: '1rem' }}>
+                  <Button variant="secondary" onClick={() => setIsSettingsOpen(false)}>Cancel</Button>
+                  <Button variant="primary" onClick={() => {
+                    setIsSettingsOpen(false);
+                    // Could add a toast here, but simple closing is fine for mockup
+                  }}>Save Preferences</Button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {mode === 'farmer' ? (
           /* FARMER MODE DASHBOARD */
@@ -112,9 +195,7 @@ export default function Dashboard() {
                 <p>Heavy rainfall is predicted tomorrow. Risk of fungal blight is increasing. We recommend applying preventative fungicide within 12 hours.</p>
               </div>
               <div className={styles.actionButtons}>
-                <Link href="/scan">
-                  <Button variant="accent" icon={<Scan size={16} />}>Scan Leaves Now</Button>
-                </Link>
+                <Button variant="accent" icon={<Scan size={16} />} onClick={() => window.location.href = '/scan'}>Scan Leaves Now</Button>
               </div>
             </div>
 

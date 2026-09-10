@@ -9,6 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@teachablemachine/image": "^0.8.5",
+    "@tensorflow-models/mobilenet": "^2.1.1",
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-backend-cpu": "^4.22.0",
+    "@tensorflow/tfjs-backend-webgl": "^4.22.0",
+    "@tensorflow/tfjs-converter": "^4.22.0",
+    "@tensorflow/tfjs-core": "^4.22.0",
     "clsx": "^2.1.0",
     "framer-motion": "^11.0.0",
     "leaflet": "^1.9.4",
@@ -17,7 +25,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
-    "recharts": "^2.12.0"
+    "react-tsparticles": "^2.12.2",
+    "recharts": "^2.12.0",
+    "tsparticles-slim": "^2.12.0"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.22",

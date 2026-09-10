@@ -5,7 +5,7 @@ import styles from './doctor.module.css';
 import { Button } from '@/components/ui/button/Button';
 import {
   BrainCircuit, Send, ArrowLeft, Leaf, CloudRain,
-  Thermometer, Sprout, FlaskConical, MapPin, Clock
+  Thermometer, Sprout, FlaskConical, MapPin, Clock, User, Sparkles
 } from 'lucide-react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,46 +26,6 @@ const SUGGESTIONS = [
   { icon: <Sprout size={14} />, text: 'Is it safe to harvest if my crop shows 20% Blight symptoms?' },
 ];
 
-const AI_RESPONSES: Record<string, Message> = {
-  rust: {
-    id: 'r1',
-    role: 'ai',
-    content: "Based on your description of **yellow stripes parallel to the leaf veins**, this is a high-probability match for <em>Wheat Stripe Rust</em> (Puccinia striiformis).\n\nThis is one of the most damaging wheat diseases in Maharashtra and requires immediate intervention to prevent 40-60% yield loss.",
-    hasPrescription: true,
-  },
-  rain: {
-    id: 'r2',
-    role: 'ai',
-    content: "Excellent question. Given the forecasted 80mm rainfall in your region, **fungal disease risk will spike significantly within 24-48 hours** post-rain due to high humidity and leaf wetness.\n\nHere is a preventative protocol to deploy before the rain hits:",
-    hasPrescription: true,
-  },
-  dosage: {
-    id: 'r3',
-    role: 'ai',
-    content: "For **Stripe Rust (Puccinia striiformis)** on wheat at the tillering stage, the recommended Tebuconazole dosage is as follows:\n\n**Dose:** 250ml of Folicur (Tebuconazole 25.9% EC) per 500L of water per hectare.\n\n**Timing:** Apply at the first sign of infection. A second spray 14 days later if conditions remain humid.\n\n**Important:** Avoid spraying during strong wind (>10 km/h) to prevent drift.",
-    hasPrescription: false,
-  },
-};
-
-function getAIResponse(userMessage: string): Message {
-  const lower = userMessage.toLowerCase();
-  if (lower.includes('yellow') || lower.includes('stripe') || lower.includes('rust') || lower.includes('disease')) {
-    return { ...AI_RESPONSES.rust, id: Date.now().toString() };
-  }
-  if (lower.includes('rain') || lower.includes('protect') || lower.includes('weather')) {
-    return { ...AI_RESPONSES.rain, id: Date.now().toString() };
-  }
-  if (lower.includes('dosage') || lower.includes('tebuconazole') || lower.includes('dose')) {
-    return { ...AI_RESPONSES.dosage, id: Date.now().toString() };
-  }
-  return {
-    id: Date.now().toString(),
-    role: 'ai',
-    content: "I have analyzed your query in the context of your farm's current conditions. Based on the weather forecast and recent scan data from your region, I recommend scheduling a Crop Scan immediately to get a precise diagnosis. Our AI Vision Engine can identify 48+ diseases from a single photograph in under 10 seconds.",
-    hasPrescription: false,
-  };
-}
-
 export default function DoctorPage() {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [inputValue, setInputValue] = useState('');
@@ -73,24 +33,66 @@ export default function DoctorPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
   };
 
   useEffect(() => { scrollToBottom(); }, [messages, isTyping]);
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (!text.trim()) return;
 
     const userMsg: Message = { id: Date.now().toString(), role: 'user', content: text };
-    setMessages(prev => [...prev, userMsg]);
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
     setInputValue('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/doctor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: text,
+          history: messages,
+          context: {
+            location: 'Nashik, MH',
+            crop: 'Wheat (Tillering)',
+            weather: '14°C / 25°C, High Rain Risk (80mm)',
+            recentScan: 'Stripe Rust (Critical)'
+          }
+        })
+      });
+
+      if (!response.ok) throw new Error('API Error');
+
       setIsTyping(false);
-      const aiMsg = getAIResponse(text);
-      setMessages(prev => [...prev, aiMsg]);
-    }, 1800);
+      
+      const aiMsgId = Date.now().toString();
+      setMessages(prev => [...prev, { id: aiMsgId, role: 'ai', content: '' }]);
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      
+      if (reader) {
+        let aiText = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          aiText += decoder.decode(value, { stream: true });
+          
+          setMessages(prev => prev.map(m => 
+            m.id === aiMsgId ? { ...m, content: aiText } : m
+          ));
+        }
+      }
+
+    } catch (error) {
+      console.error(error);
+      setIsTyping(false);
+      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', content: 'An error occurred. Please make sure your GEMINI_API_KEY is configured in the .env.local file.' }]);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -161,21 +163,20 @@ export default function DoctorPage() {
           </div>
         </div>
 
-        <div className={styles.sectionDivider}>Conversation History</div>
+        <div className={styles.sectionDivider}>Recent Queries</div>
 
-        {[
-          { text: 'How do I treat Grape Mildew organically?', date: '2 days ago', color: 'var(--color-amber)' },
-          { text: 'Pest control options for Bollworm', date: '4 days ago', color: 'var(--color-muted-green)' },
-          { text: 'Water schedule during monsoon', date: '1 week ago', color: 'var(--color-charcoal)' },
-        ].map((item, i) => (
+        {messages.filter(m => m.role === 'user').slice(-4).reverse().map((msg, i) => (
           <div key={i} className={styles.historyItem}>
-            <div className={styles.historyDot} style={{ background: item.color }}></div>
+            <div className={styles.historyDot} style={{ background: 'var(--color-muted-green)' }}></div>
             <div>
-              <div className={styles.historyText}>{item.text}</div>
-              <div className={styles.historyDate}><Clock size={10} style={{ display: 'inline', marginRight: 3 }} />{item.date}</div>
+              <div className={styles.historyText} style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{msg.content}</div>
+              <div className={styles.historyDate}><Clock size={10} style={{ display: 'inline', marginRight: 3 }} />Just now</div>
             </div>
           </div>
         ))}
+        {messages.filter(m => m.role === 'user').length === 0 && (
+          <div className={styles.historyText} style={{ fontStyle: 'italic', color: '#aaa', padding: '0 12px' }}>No queries yet.</div>
+        )}
       </aside>
 
       {/* Chat Area */}
@@ -219,14 +220,16 @@ export default function DoctorPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <div className={`${styles.avatar} ${msg.role === 'ai' ? styles.aiAvatar : styles.userAvatar}`}>
-                    {msg.role === 'ai' ? 'AI' : 'You'}
+                  <div className={`${styles.avatar} ${msg.role === 'user' ? styles.userAvatar : styles.aiAvatar}`}>
+                    {msg.role === 'user' ? <User size={20} strokeWidth={2.5} /> : <Sparkles size={20} strokeWidth={2.5} />}
                   </div>
-                  <div className={`${styles.bubble} ${msg.role === 'ai' ? styles.aiBubble : styles.userBubble}`}>
+                  <div className={styles.messageContent}>
                     <div className={styles.bubbleLabel}>
-                      {msg.role === 'ai' ? 'AI Agronomist' : 'You'}
+                      {msg.role === 'user' ? 'You' : 'AI Agronomist'}
                     </div>
-                    <div dangerouslySetInnerHTML={{ __html: formatContent(msg.content) }} />
+                    <div className={`${styles.bubble} ${msg.role === 'user' ? styles.userBubble : styles.aiBubble}`}>
+                      <div dangerouslySetInnerHTML={{ __html: formatContent(msg.content) }} />
+                    </div>
                     {msg.hasPrescription && (
                       <div className={styles.prescriptionCard}>
                         <div className={styles.prescriptionTitle}>

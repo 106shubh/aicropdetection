@@ -123,16 +123,21 @@
   flex-direction: column;
   height: 100%;
   max-height: calc(100vh - 61px);
+  overflow: hidden;
+  background: var(--color-off-white);
+  background-image: radial-gradient(circle at 50% 0%, rgba(78, 110, 88, 0.08) 0%, transparent 60%);
 }
 
 .messagesContainer {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--spacing-8);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-6);
-  scroll-behavior: smooth;
+  gap: var(--spacing-8);
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--spacing-6);
+  flex: 1;
+  overflow-y: auto;
 }
 
 .welcomeState {
@@ -209,6 +214,7 @@
   display: flex;
   gap: var(--spacing-4);
   align-items: flex-start;
+  margin-bottom: var(--spacing-2);
 }
 
 .messageGroup.user {
@@ -216,40 +222,72 @@
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 700;
+  box-shadow: var(--shadow-sm);
 }
 
 .aiAvatar {
-  background: var(--color-deep-forest);
-  color: var(--color-muted-green-light);
-}
-
-.userAvatar {
-  background: var(--color-muted-green);
+  background: linear-gradient(135deg, var(--color-deep-forest), var(--color-muted-green));
   color: white;
 }
 
+.userAvatar {
+  background: var(--color-white);
+  color: var(--color-deep-forest);
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.messageContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 75%;
+}
+
+.messageGroup.user .messageContent {
+  align-items: flex-end;
+}
+
+.bubbleLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 4px;
+}
+
 .bubble {
-  max-width: 68%;
   padding: var(--spacing-4) var(--spacing-5);
-  border-radius: var(--radius-lg);
-  font-size: 0.9rem;
+  border-radius: 18px;
+  font-size: 0.95rem;
   line-height: 1.65;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+}
+
+.bubble p {
+  margin-bottom: 0.5rem;
+}
+
+.bubble p:last-child {
+  margin-bottom: 0;
 }
 
 .aiBubble {
   background: var(--color-white);
   color: var(--color-charcoal);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   border-top-left-radius: 4px;
 }
 
@@ -257,15 +295,6 @@
   background: var(--color-deep-forest);
   color: var(--color-white);
   border-top-right-radius: 4px;
-}
-
-.bubbleLabel {
-  font-size: 0.7rem;
-  font-weight: 600;
-  margin-bottom: var(--spacing-2);
-  opacity: 0.6;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 /* AI Response formatting */
