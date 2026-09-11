@@ -26,7 +26,7 @@ Current Farmer Context:
 Always keep your responses highly actionable, concise, and structured. Use Markdown for bolding important chemicals or steps. Do not use generic pleasantries. Act as a critical intelligence system.`;
 
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-3.8-flash", 
+      model: "gemini-2.5-flash", 
       systemInstruction: systemPrompt,
     });
 

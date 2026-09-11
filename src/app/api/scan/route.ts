@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     // Extract base64 data (remove "data:image/jpeg;base64," prefix)
     const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
 
-    const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `You are an expert plant pathologist and agronomist AI.
 Analyze this image of a crop/plant. Identify the exact crop and any disease or pest present. 
