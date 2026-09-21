@@ -3,6 +3,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Initialization happens inside the POST route now
 
+export const maxDuration = 60; // Allow up to 60s for Render cold starts
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
