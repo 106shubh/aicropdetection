@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// Initialize Gemini API
-const apiKey = process.env.GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(apiKey || '');
+// Initialization happens inside the POST route now
 
 export async function POST(req: NextRequest) {
-  if (!apiKey) {
-    return NextResponse.json({ error: 'GEMINI_API_KEY is not set' }, { status: 500 });
-  }
-
   try {
     const body = await req.json();
     const { image } = body; // Base64 data URL
@@ -18,46 +12,82 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No image provided' }, { status: 400 });
     }
 
-    // Extract base64 data (remove "data:image/jpeg;base64," prefix)
+    // Convert data URI back to raw base64 string
     const base64Data = image.replace(/^data:image\/\w+;base64,/, "");
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-    const prompt = `You are an expert plant pathologist and agronomist AI.
-Analyze this image of a crop/plant. Identify the exact crop and any disease or pest present. 
-If it is healthy, state that it is healthy.
-Return the result strictly as a JSON array with one object containing 'className' (e.g., 'Tomato - Early Blight' or 'Wheat - Healthy') and 'probability' (a number between 0.0 and 1.0 representing your confidence). Do not include markdown formatting or any other text.`;
-
-    const result = await model.generateContent([
-      prompt,
-      {
-        inlineData: {
-          data: base64Data,
-          mimeType: "image/jpeg"
+    // 1. OOD / NOVELTY GATEKEEPER (Gemini Vision)
+    // We use Gemini strictly to detect if the user uploaded something stupid (like paper, cars, humans)
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (apiKey) {
+      try {
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+        const prompt = `Analyze this image. Does it contain a close-up of a plant, crop, fruit, or leaf? Answer ONLY with "YES" or "NO".`;
+        const result = await model.generateContent([
+          prompt,
+          { inlineData: { data: base64Data, mimeType: "image/jpeg" } }
+        ]);
+        const answer = result.response.text().trim().toUpperCase();
+        
+        if (answer.includes("NO")) {
+          console.log("Gatekeeper rejected the image as Not a Plant.");
+          return NextResponse.json({ 
+            predictions: [
+              { 
+                className: "Not a Plant - Image Rejected",
+                probability: 1.0,
+                heatmap: null,
+                severity: "INVALID",
+                severityScore: 0
+              }
+            ] 
+          });
         }
+      } catch (err) {
+        console.error("Gemini Gatekeeper failed, falling back to Python API directly", err);
       }
-    ]);
+    } else {
+      console.log("GEMINI_API_KEY not found! Bypassing Gatekeeper.");
+    }
 
-    const response = await result.response;
-    let text = response.text().trim();
-    
-    // Clean up markdown if Gemini returned it despite instructions
-    if (text.startsWith('```json')) text = text.slice(7);
-    if (text.endsWith('```')) text = text.slice(0, -3);
-    
-    const parsed = JSON.parse(text);
+    // 2. REAL INFERENCE (Local Python Backend)
+    const formData = new FormData();
+    const buffer = Buffer.from(base64Data, 'base64');
+    const blob = new Blob([buffer], { type: 'image/jpeg' });
+    formData.append('file', blob, 'upload.jpg');
 
-    return NextResponse.json({ predictions: parsed });
+    console.log("Calling Local Python FastAPI Backend...");
+    
+    // Call the newly refactored Python backend
+    const backendUrl = process.env.BACKEND_API_URL || 'https://modelofkrishirakshak.onrender.com';
+    const pythonRes = await fetch(`${backendUrl}/predict/file?region=pune&stage=vegetative`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!pythonRes.ok) {
+        const errText = await pythonRes.text();
+        console.error("Python API Error:", errText);
+        return NextResponse.json({ error: "Backend validation failed", details: errText }, { status: pythonRes.status });
+    }
+
+    const pythonData = await pythonRes.json();
+    
+    // Return to UI
+    return NextResponse.json({ 
+      predictions: [
+        { 
+          className: `${pythonData.crop} - ${pythonData.diagnosis.disease}`,
+          probability: pythonData.diagnosis.confidence_percent / 100,
+          heatmap: pythonData.explainability?.heatmap || null,
+          severity: pythonData.severity_info?.level || "unknown",
+          severityScore: pythonData.severity_info?.score || 0
+        }
+      ] 
+    });
 
   } catch (error: any) {
     console.error('Scan API Error:', error);
-    // FALLBACK FOR DEMO PURPOSES:
-    // If the API key is missing or invalid, return a highly accurate simulated response 
-    // to allow the user's presentation/project to continue functioning.
-    return NextResponse.json({ 
-      predictions: [
-        { className: 'Tomato - Early Blight (Alternaria solani)', probability: 0.975 }
-      ]
-    });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

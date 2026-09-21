@@ -238,3 +238,15 @@
   line-height: 1.6;
   opacity: 0.9;
 }
+
+@media (max-width: 900px) {
+  .contentGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .container { padding: var(--spacing-4); }
+  .header { flex-direction: column; gap: var(--spacing-4); align-items: flex-start; }
+  .severityBanner { flex-direction: column; gap: var(--spacing-4); text-align: left; align-items: flex-start; }
+  .severityIndicator { text-align: left; }
+  .envFactors { grid-template-columns: 1fr; }
+}

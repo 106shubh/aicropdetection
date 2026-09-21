@@ -51,8 +51,23 @@ export default function ScanPage() {
       sessionStorage.setItem('scanResult', JSON.stringify({
         disease: prediction.className,
         confidence: (prediction.probability * 100).toFixed(1),
-        image: base64Image
+        image: base64Image,
+        heatmap: prediction.heatmap,
+        severity: prediction.severity,
+        severityScore: prediction.severityScore
       }));
+      
+      // Log to recent activity for Dashboard
+      const existingHistory = JSON.parse(localStorage.getItem('recentScans') || '[]');
+      const newScan = {
+        date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        crop: prediction.className.split('-')[0]?.trim() || 'Plant',
+        diagnosis: prediction.className.split('-')[1]?.trim() || prediction.className,
+        confidence: (prediction.probability * 100).toFixed(1) + '%',
+        status: prediction.className.toLowerCase().includes('healthy') ? 'Healthy' : 'Action Needed'
+      };
+      localStorage.setItem('recentScans', JSON.stringify([newScan, ...existingHistory].slice(0, 5)));
+
       
       router.push('/scan/result');
     } catch (error) {
@@ -143,7 +158,7 @@ export default function ScanPage() {
                 <ScanIcon size={48} />
               </div>
               <h2 className={styles.uploadTitle}>Scan Crop Disease</h2>
-              <p className={styles.uploadSubtitle}>Powered by Google Gemini 1.5 Pro Vision for 99% accuracy.</p>
+              <p className={styles.uploadSubtitle}>Powered by proprietary KrishiRakshak Vision AI for ultra-accurate detection.</p>
               
               <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Button variant="accent" icon={<Camera size={18} />} onClick={startLiveCamera} style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}>
