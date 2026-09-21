@@ -53,18 +53,18 @@ export async function POST(req: NextRequest) {
     }
 
     // 2. REAL INFERENCE (Local Python Backend)
-    const formData = new FormData();
-    const buffer = Buffer.from(base64Data, 'base64');
-    const blob = new Blob([buffer], { type: 'image/jpeg' });
-    formData.append('file', blob, 'upload.jpg');
-
     console.log("Calling Local Python FastAPI Backend...");
     
-    // Call the newly refactored Python backend
+    // Call the newly refactored Python backend via the JSON endpoint
     const backendUrl = process.env.BACKEND_API_URL || 'https://modelofkrishirakshak.onrender.com';
-    const pythonRes = await fetch(`${backendUrl}/predict/file?region=pune&stage=vegetative`, {
+    const pythonRes = await fetch(`${backendUrl}/predict`, {
       method: 'POST',
-      body: formData
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        image_bytes: base64Data,
+        region: 'pune',
+        stage: 'vegetative'
+      })
     });
     
     if (!pythonRes.ok) {
