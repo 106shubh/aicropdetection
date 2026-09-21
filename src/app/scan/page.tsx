@@ -42,7 +42,10 @@ export default function ScanPage() {
         body: JSON.stringify({ image: base64Image })
       });
       
-      if (!res.ok) throw new Error('API request failed');
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || errorData.details || `Server returned ${res.status}`);
+      }
       
       setAnalysisText('Extracting pathogen patterns...');
       const data = await res.json();
@@ -70,9 +73,9 @@ export default function ScanPage() {
 
       
       router.push('/scan/result');
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Failed to analyze image with Gemini API.");
+      alert(`Failed to analyze image. Reason: ${error.message}`);
       setStatus('idle');
     }
   };
